@@ -1,0 +1,56 @@
+name: Bug report
+description: Report a repeatable problem in the Maytrix source or interface.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve the Maytrix preview. Do not include credentials, personal information, or third-party DLLs.
+  - type: input
+    id: commit
+    attributes:
+      label: Version or commit
+      description: Which Maytrix version or commit did you test?
+      placeholder: 0.1.0 or commit SHA
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Include the game, loader, headset, and XR runtime versions when relevant.
+      placeholder: Windows 11, BepInEx ..., Quest through Link ...
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: List the smallest safe sequence that reproduces the bug.
+      placeholder: |
+        1. Build ...
+        2. Open ...
+        3. Select ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Paste only the relevant lines after removing usernames, paths, tokens, and personal information.
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Final checks
+      options:
+        - label: I searched existing issues first.
+          required: true
+        - label: I removed private or sensitive information.
+          required: true

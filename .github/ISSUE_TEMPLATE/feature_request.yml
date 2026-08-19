@@ -1,0 +1,33 @@
+name: Feature request
+description: Suggest a focused, safe improvement for Maytrix.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: Maytrix currently prioritizes interface polish, accessibility, diagnostics, and harmless private-environment features.
+  - type: textarea
+    id: idea
+    attributes:
+      label: Feature idea
+      description: What should Maytrix do?
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Why is it useful?
+      description: Explain the user problem this would solve.
+    validations:
+      required: true
+  - type: textarea
+    id: design
+    attributes:
+      label: Suggested design
+      description: Describe the controls, menu location, or implementation approach if you have one.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This request is not intended to harass players, bypass protections, collect private data, or disrupt public rooms.
+          required: true
