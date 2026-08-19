@@ -2,6 +2,28 @@
 
 All notable Maytrix Mod Menu changes will be recorded here.
 
+## 0.2.0-beta — 2026-08-19
+
+### Added
+
+- Hold-to-open left-controller behavior
+- Live FPS/frame-time and controller-input displays
+- Four original Maytrix color palettes
+- Menu size, pointer length/hand/tilt, follow speed, and anchor controls
+- Large text, minimal mode, comfort preset, and saved preferences
+- Automated clean-room compile, ZIP packaging, and prerelease publishing
+
+### Changed
+
+- Replaced every placeholder card with a working local interface action
+- Reorganized the sidebar into Home, Interface, Controls, Access, and Community
+- Updated the README with drag-and-drop installation and exact controls
+
+### Validation
+
+- Source is compiled by GitHub Actions before an artifact or release is published
+- Real-headset and current-game-version compatibility reports are still requested
+
 ## 0.1.0-preview — 2026-08-19
 
 ### Added

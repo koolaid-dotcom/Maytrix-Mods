@@ -1,6 +1,6 @@
 # Architecture
 
-Maytrix is intentionally small while the interface is still a preview.
+Maytrix is intentionally small and uses only BepInEx plus stable Unity APIs.
 
 ## Runtime flow
 
@@ -8,6 +8,7 @@ Maytrix is intentionally small while the interface is still a preview.
 2. `MenuManager` owns the menu lifecycle.
 3. `MaytrixMenu` builds and updates the world-space interface.
 4. `MenuItem` stores each card's label, state, kind, and action.
+5. GitHub Actions performs a clean compile and packages only the Maytrix DLL, README, and license.
 
 ## Main areas
 
@@ -29,3 +30,5 @@ Maytrix is intentionally small while the interface is still a preview.
 - Convert XR tracking poses into world space before positioning UI.
 - Treat external links as explicit user actions.
 - Do not add hidden telemetry or disruptive public-room behavior.
+- Keep every visible card connected to a real local effect.
+- Publish a binary only after the automated build succeeds.
