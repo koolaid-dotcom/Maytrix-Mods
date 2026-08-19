@@ -29,10 +29,6 @@
       <HintPath>$(GorillaTagPath)\Gorilla Tag_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>$(GorillaTagPath)\Gorilla Tag_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>$(GorillaTagPath)\Gorilla Tag_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>false</Private>
@@ -48,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(UseLocalGameAssemblies)' != 'true'">
-    <PackageReference Include="BepInEx.Core" Version="5.*" IncludeAssets="compile" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" IncludeAssets="compile" PrivateAssets="all" />
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.33" IncludeAssets="compile" PrivateAssets="all" />
   </ItemGroup>
 

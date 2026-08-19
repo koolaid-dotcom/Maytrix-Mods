@@ -38,6 +38,14 @@ namespace MaytrixMods
         private static readonly float[] FollowSpeeds = { 10f, 18f, 30f };
         private static readonly string[] FollowSpeedNames = { "SMOOTH", "BALANCED", "SNAPPY" };
         private static readonly string[] AnchorNames = { "WRIST", "PALM", "FLOATING" };
+        private static readonly float[] PointerTilts = { -20f, -10f, 0f, 10f, 20f };
+        private static readonly string[] PointerTiltNames = { "-20 DEG", "-10 DEG", "0 DEG", "+10 DEG", "+20 DEG" };
+        private static readonly Vector3[] AnchorOffsets =
+        {
+            new Vector3(0.09f, 0.10f, 0.08f),
+            new Vector3(0.13f, 0.045f, 0.14f),
+            new Vector3(0.02f, 0.18f, 0.22f)
+        };
 
         private readonly ManualLogSource _logger;
         private readonly Dictionary<string, List<MenuItem>> _categories = new Dictionary<string, List<MenuItem>>();
@@ -57,7 +65,6 @@ namespace MaytrixMods
         private string _activeCategory = "Home";
         private int _page;
         private bool _isOpen;
-        private bool _desktopOpen;
         private bool _lastTrigger;
         private bool _haptics = true;
         private bool _reducedMotion;
@@ -76,6 +83,7 @@ namespace MaytrixMods
         private int _pointerLengthIndex = 1;
         private int _followSpeedIndex = 1;
         private int _anchorIndex;
+        private int _pointerTiltIndex = 2;
         private float _nextDeviceRefresh;
         private float _nextStatusRefresh;
         private float _smoothedFps;
@@ -104,14 +112,10 @@ namespace MaytrixMods
                 _nextDeviceRefresh = Time.unscaledTime + 2f;
             }
 
-            if (Input.GetKeyDown(KeyCode.F6))
-                _desktopOpen = !_desktopOpen;
-
             bool controllerHeld = ReadButton(_leftHand, CommonUsages.primaryButton)
                                   || ReadButton(_leftHand, CommonUsages.menuButton);
-            bool shouldBeOpen = controllerHeld || _desktopOpen;
-            if (shouldBeOpen != _isOpen)
-                SetOpen(shouldBeOpen);
+            if (controllerHeld != _isOpen)
+                SetOpen(controllerHeld);
 
             if (!_isOpen)
                 return;
@@ -181,7 +185,8 @@ namespace MaytrixMods
                 new MenuItem("Pointer Length", "Cycle the controller selection beam distance.", MenuItemKind.Action, _ => CyclePointerLength(), () => PointerLengthNames[_pointerLengthIndex]),
                 new MenuItem("Menu Size", "Cycle the world-space panel size.", MenuItemKind.Action, _ => CycleMenuScale(), () => MenuScaleNames[_menuScaleIndex]),
                 new MenuItem("Follow Speed", "Cycle how quickly the panel follows the controller.", MenuItemKind.Action, _ => CycleFollowSpeed(), () => FollowSpeedNames[_followSpeedIndex]),
-                new MenuItem("Anchor", "Cycle the panel offset around the left controller.", MenuItemKind.Action, _ => CycleAnchor(), () => AnchorNames[_anchorIndex]));
+                new MenuItem("Anchor", "Cycle the panel offset around the left controller.", MenuItemKind.Action, _ => CycleAnchor(), () => AnchorNames[_anchorIndex]),
+                new MenuItem("Pointer Tilt", "Adjust the selection beam angle for different controller poses.", MenuItemKind.Action, _ => CyclePointerTilt(), () => PointerTiltNames[_pointerTiltIndex]));
 
             AddCategory("Access", reducedMotion, highContrast, largeText, haptics, comfortPreset, resetAll);
 
@@ -363,8 +368,7 @@ namespace MaytrixMods
             Camera? camera = Camera.main;
             if (TryGetWorldPose(_leftHand, out Vector3 leftPosition, out Quaternion leftRotation) && camera != null)
             {
-                Vector3[] offsets = { new Vector3(0.09f, 0.10f, 0.08f), new Vector3(0.13f, 0.045f, 0.14f), new Vector3(0.02f, 0.18f, 0.22f) };
-                Vector3 targetPosition = leftPosition + leftRotation * offsets[Mathf.Clamp(_anchorIndex, 0, offsets.Length - 1)];
+                Vector3 targetPosition = leftPosition + leftRotation * AnchorOffsets[Mathf.Clamp(_anchorIndex, 0, AnchorOffsets.Length - 1)];
                 Quaternion targetRotation = Quaternion.LookRotation(camera.transform.position - targetPosition, Vector3.up);
                 float followSpeed = FollowSpeeds[Mathf.Clamp(_followSpeedIndex, 0, FollowSpeeds.Length - 1)];
                 float smoothing = _reducedMotion ? 1f : 1f - Mathf.Exp(-followSpeed * Time.unscaledDeltaTime);
@@ -392,18 +396,29 @@ namespace MaytrixMods
             }
 
             _pointerLine.enabled = true;
-            Vector3 direction = rotation * Vector3.forward;
+            float pointerTilt = PointerTilts[Mathf.Clamp(_pointerTiltIndex, 0, PointerTilts.Length - 1)];
+            Vector3 direction = (rotation * Quaternion.Euler(pointerTilt, 0f, 0f)) * Vector3.forward;
             Vector3 end = position + direction * pointerLength;
             _hovered = null;
             if (Physics.Raycast(position, direction, out RaycastHit hit, pointerLength, 1 << MenuLayer, QueryTriggerInteraction.Ignore))
             {
-                RenderedButton? button = _buttons.FirstOrDefault(candidate => candidate.Collider == hit.collider);
+                RenderedButton? button = null;
+                for (int index = 0; index < _buttons.Count; index++)
+                {
+                    if (_buttons[index].Collider == hit.collider)
+                    {
+                        button = _buttons[index];
+                        break;
+                    }
+                }
                 if (button != null)
                 {
                     _hovered = button;
                     end = hit.point;
                     if (_showTooltips && Time.unscaledTime >= _toastUntil)
                         SetTooltip(GetDescription(button));
+                    else if (!_showTooltips && Time.unscaledTime >= _toastUntil)
+                        SetTooltip(DefaultTooltip());
                 }
             }
             else if (Time.unscaledTime >= _toastUntil)
@@ -444,7 +459,7 @@ namespace MaytrixMods
             _nextStatusRefresh = Time.unscaledTime + 0.20f;
 
             if (_performanceText != null)
-                _performanceText.text = _performanceHud ? $"{Mathf.RoundToInt(_smoothedFps)} FPS  /  {delta * 1000f:0.0} MS" : $"v{PluginInfo.Version}";
+                _performanceText.text = _performanceHud ? $"{Mathf.RoundToInt(_smoothedFps)} FPS  /  {1000f / _smoothedFps:0.0} MS" : $"v{PluginInfo.Version}";
             if (_inputText != null)
                 _inputText.text = _inputMonitor ? $"L:{InputMarks(_leftHand)}   R:{InputMarks(_rightHand)}" : (_minimalMode ? string.Empty : "LOCAL UI  /  PRIVATE & MODDED PLAY");
         }
@@ -459,7 +474,6 @@ namespace MaytrixMods
 
         private void Press(RenderedButton button, InputDevice pointerDevice)
         {
-            PulseHaptics(pointerDevice);
             if (button.Payload is string command)
             {
                 if (button.IsCategory && _categories.ContainsKey(command))
@@ -468,6 +482,7 @@ namespace MaytrixMods
                     _page = 0;
                     SavePreferences();
                     Rebuild();
+                    PulseHaptics(pointerDevice);
                     ShowToast($"Opened {command}");
                     return;
                 }
@@ -476,6 +491,7 @@ namespace MaytrixMods
                     _page = Math.Max(0, _page - 1);
                     SavePreferences();
                     Rebuild();
+                    PulseHaptics(pointerDevice);
                     ShowToast("Previous page");
                     return;
                 }
@@ -485,6 +501,7 @@ namespace MaytrixMods
                     _page = Math.Min(pageCount - 1, _page + 1);
                     SavePreferences();
                     Rebuild();
+                    PulseHaptics(pointerDevice);
                     ShowToast("Next page");
                     return;
                 }
@@ -493,6 +510,7 @@ namespace MaytrixMods
             if (button.Payload is MenuItem item)
             {
                 item.Press();
+                PulseHaptics(pointerDevice);
                 _logger.LogInfo($"Menu item pressed: {item.Label}");
                 if (item.Kind == MenuItemKind.Toggle)
                     Rebuild();
@@ -588,6 +606,7 @@ namespace MaytrixMods
             _pointerLengthIndex = 1;
             _followSpeedIndex = 1;
             _anchorIndex = 0;
+            _pointerTiltIndex = 2;
             SyncToggleStates();
             SavePreferences();
             Rebuild();
@@ -598,6 +617,7 @@ namespace MaytrixMods
         private void CyclePointerLength() { _pointerLengthIndex = (_pointerLengthIndex + 1) % PointerLengths.Length; SavePreferences(); Rebuild(); }
         private void CycleFollowSpeed() { _followSpeedIndex = (_followSpeedIndex + 1) % FollowSpeeds.Length; SavePreferences(); Rebuild(); }
         private void CycleAnchor() { _anchorIndex = (_anchorIndex + 1) % AnchorNames.Length; SavePreferences(); Rebuild(); }
+        private void CyclePointerTilt() { _pointerTiltIndex = (_pointerTiltIndex + 1) % PointerTilts.Length; SavePreferences(); Rebuild(); }
 
         private void OpenUrl(string url)
         {
@@ -652,6 +672,7 @@ namespace MaytrixMods
             _pointerLengthIndex = Mathf.Clamp(PlayerPrefs.GetInt(PreferencePrefix + "PointerLength", 1), 0, PointerLengths.Length - 1);
             _followSpeedIndex = Mathf.Clamp(PlayerPrefs.GetInt(PreferencePrefix + "FollowSpeed", 1), 0, FollowSpeeds.Length - 1);
             _anchorIndex = Mathf.Clamp(PlayerPrefs.GetInt(PreferencePrefix + "Anchor", 0), 0, AnchorNames.Length - 1);
+            _pointerTiltIndex = Mathf.Clamp(PlayerPrefs.GetInt(PreferencePrefix + "PointerTilt", 2), 0, PointerTilts.Length - 1);
             if (_rememberPage)
             {
                 string savedCategory = PlayerPrefs.GetString(PreferencePrefix + "Category", "Home");
@@ -679,6 +700,7 @@ namespace MaytrixMods
             PlayerPrefs.SetInt(PreferencePrefix + "PointerLength", _pointerLengthIndex);
             PlayerPrefs.SetInt(PreferencePrefix + "FollowSpeed", _followSpeedIndex);
             PlayerPrefs.SetInt(PreferencePrefix + "Anchor", _anchorIndex);
+            PlayerPrefs.SetInt(PreferencePrefix + "PointerTilt", _pointerTiltIndex);
             if (_rememberPage)
             {
                 PlayerPrefs.SetString(PreferencePrefix + "Category", _activeCategory);

@@ -6,10 +6,10 @@ All notable Maytrix Mod Menu changes will be recorded here.
 
 ### Added
 
-- Hold-to-open left-controller behavior with an independent F6 desktop fallback
+- Hold-to-open left-controller behavior
 - Live FPS/frame-time and controller-input displays
 - Four original Maytrix color palettes
-- Menu size, pointer length/hand, follow speed, and anchor controls
+- Menu size, pointer length/hand/tilt, follow speed, and anchor controls
 - Large text, minimal mode, comfort preset, and saved preferences
 - Automated clean-room compile, ZIP packaging, and prerelease publishing
 

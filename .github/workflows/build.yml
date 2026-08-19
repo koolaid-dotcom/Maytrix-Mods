@@ -7,7 +7,7 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -46,16 +46,44 @@ jobs:
           path: dist/Maytrix-Mod-Menu-v0.2.0.zip
           if-no-files-found: error
 
+  release:
+    name: Publish verified beta
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[release v0.2.0]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out release notes
+        uses: actions/checkout@v4
+
+      - name: Download verified build
+        uses: actions/download-artifact@v4
+        with:
+          name: Maytrix-Mod-Menu-v0.2.0
+          path: dist
+
+      - name: Extract direct DLL asset
+        shell: bash
+        run: unzip -j "dist/Maytrix-Mod-Menu-v0.2.0.zip" "Maytrix Mod Menu/Maytrix Mods.dll" -d dist
+
       - name: Create v0.2.0 beta release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[release v0.2.0]')
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          gh release create "v0.2.0" \
-            "dist/Maytrix-Mod-Menu-v0.2.0.zip" \
-            "bin/Release/netstandard2.1/Maytrix Mods.dll" \
-            --target "$GITHUB_SHA" \
-            --title "Maytrix Mod Menu v0.2.0 Beta" \
-            --notes-file RELEASE_NOTES.md \
-            --prerelease
+          if gh release view "v0.2.0" >/dev/null 2>&1; then
+            gh release upload "v0.2.0" \
+              "dist/Maytrix-Mod-Menu-v0.2.0.zip" \
+              "dist/Maytrix Mods.dll" \
+              --clobber
+          else
+            gh release create "v0.2.0" \
+              "dist/Maytrix-Mod-Menu-v0.2.0.zip" \
+              "dist/Maytrix Mods.dll" \
+              --target "$GITHUB_SHA" \
+              --title "Maytrix Mod Menu v0.2.0 Beta" \
+              --notes-file RELEASE_NOTES.md \
+              --prerelease
+          fi

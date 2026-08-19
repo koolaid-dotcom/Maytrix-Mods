@@ -55,9 +55,6 @@ No installer, account, telemetry service, or extra Maytrix dependency is include
 | Aim | Point the right controller |
 | Press a card | Right trigger |
 | Optional left-handed aiming | Enable **Left-Hand Pointer**, then use left trigger |
-| Desktop layout check | Press `F6` to toggle the panel |
-
-`F6` is only a visual fallback. Normal VR interaction requires XR controllers.
 
 ## Working features
 
@@ -78,6 +75,7 @@ No installer, account, telemetry service, or extra Maytrix dependency is include
 
 - Right- or left-controller selection beam
 - Short, normal, and long pointer distances
+- Five pointer-tilt adjustments for different controller aim poses
 - Small, medium, and large panel sizes
 - Smooth, balanced, and snappy panel following
 - Wrist, palm, and floating panel anchors
@@ -101,7 +99,7 @@ No installer, account, telemetry service, or extra Maytrix dependency is include
 The project can compile in two modes:
 
 - On a development PC with Gorilla Tag installed, it uses the local game and BepInEx assemblies.
-- In GitHub Actions, it uses compile-only BepInEx and Unity reference packages and never bundles those dependencies into the plugin.
+- In GitHub Actions, it uses pinned compile-only BepInEx and Unity reference packages and never bundles those dependencies into the plugin.
 
 ```powershell
 git clone https://github.com/koolaid-dotcom/Maytrix-Mods.git

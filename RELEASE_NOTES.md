@@ -9,7 +9,7 @@ This is the first automated drag-and-drop Maytrix build. GitHub Actions compiles
 - Live FPS/frame-time and controller-input displays
 - Four original Maytrix color themes
 - High contrast, large text, reduced motion, haptics, and tooltips
-- Pointer hand, length, panel size, follow speed, and anchor controls
+- Pointer hand, length, tilt, panel size, follow speed, and anchor controls
 - Saved interface preferences, comfort preset, and full reset
 - Explicit Discord and GitHub links
 

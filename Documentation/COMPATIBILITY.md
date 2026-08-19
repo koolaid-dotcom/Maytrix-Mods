@@ -8,6 +8,6 @@ Maytrix 0.2.0 is an automatically compiled PCVR beta. The release workflow verif
 | SteamVR headsets | Report requested | Uses standard Unity XR input devices |
 | Meta Quest through PCVR | Report requested | Requires the Windows PC game and a working PCVR connection |
 | Quest standalone | Not supported | This BepInEx project targets the PC game |
-| Desktop without VR | Layout only | F6 can toggle the panel, but card interaction requires XR controllers |
+| Desktop without VR | Not supported | Maytrix requires XR controllers for hold-to-open and card interaction |
 
 Compatibility can change when Gorilla Tag, Unity, or BepInEx updates. A useful report includes the game version, headset, XR runtime, BepInEx version, and `BepInEx/LogOutput.log`.
