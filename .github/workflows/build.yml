@@ -1,0 +1,61 @@
+name: Build Maytrix
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Compile and package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore MaytrixMods.sln -p:UseLocalGameAssemblies=false
+
+      - name: Build release DLL
+        run: dotnet build MaytrixMods.sln -c Release --no-restore -p:UseLocalGameAssemblies=false -p:ContinuousIntegrationBuild=true
+
+      - name: Package drag-and-drop download
+        shell: bash
+        run: |
+          mkdir -p "dist/Maytrix Mod Menu"
+          cp "bin/Release/netstandard2.1/Maytrix Mods.dll" "dist/Maytrix Mod Menu/"
+          cp README.md LICENSE "dist/Maytrix Mod Menu/"
+          cd dist
+          zip -r "Maytrix-Mod-Menu-v0.2.0.zip" "Maytrix Mod Menu"
+
+      - name: Upload verified build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Maytrix-Mod-Menu-v0.2.0
+          path: dist/Maytrix-Mod-Menu-v0.2.0.zip
+          if-no-files-found: error
+
+      - name: Create v0.2.0 beta release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[release v0.2.0]')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create "v0.2.0" \
+            "dist/Maytrix-Mod-Menu-v0.2.0.zip" \
+            "bin/Release/netstandard2.1/Maytrix Mods.dll" \
+            --target "$GITHUB_SHA" \
+            --title "Maytrix Mod Menu v0.2.0 Beta" \
+            --notes-file RELEASE_NOTES.md \
+            --prerelease

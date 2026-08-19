@@ -1,6 +1,6 @@
 # Contributing to Maytrix
 
-Thanks for helping improve Maytrix Mod Menu. The project is currently an early source preview, so small, focused changes are easiest to review.
+Thanks for helping improve Maytrix Mod Menu. Small, focused changes are easiest to review and validate through the automated build.
 
 ## Good contributions
 
@@ -16,7 +16,7 @@ Changes intended to harass players, bypass protections, steal data, disrupt publ
 
 1. Fork the repository only for the purpose of preparing a contribution back to Maytrix, then create a descriptive branch.
 2. Install the .NET SDK and a compatible BepInEx setup.
-3. Set `GorillaTagPath` to your local Gorilla Tag installation.
+3. Set `GorillaTagPath` to your local Gorilla Tag installation. If it is not available, the project falls back to compile-only package references.
 4. Build with `dotnet build MaytrixMods.sln -c Release`.
 5. Test controller alignment, readability, and every changed control in VR.
 
