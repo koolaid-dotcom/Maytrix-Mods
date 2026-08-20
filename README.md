@@ -1,8 +1,38 @@
-# Maytrix Menu
+<p align="center">
+  <img src="Resources/maytrix-banner.png" alt="Maytrix Menu banner" width="900">
+</p>
 
-A polished, controller-first square menu for local PCVR settings, accessibility, performance monitoring, and reversible visual presets. Maytrix contains no gameplay cheats, player targeting, anti-cheat bypasses, room disruption, telemetry, or background network requests.
+<h1 align="center">Maytrix Menu</h1>
 
-> **Beta status:** both build modes pass with zero warnings, including a build against the currently installed Gorilla Tag/BepInEx files. A real-headset test is still required before publishing this as a stable release.
+<p align="center">
+  A polished, controller-first square menu for local PCVR settings, accessibility, performance monitoring, and reversible visual presets.
+</p>
+
+<p align="center">
+  <a href="https://github.com/koolaid-dotcom/Maytrix-Mods/releases/tag/v0.3.0"><img alt="Download v0.3.0 Beta" src="https://img.shields.io/badge/download-v0.3.0%20beta-19d8ff?style=for-the-badge&amp;logo=github&amp;logoColor=white"></a>
+  <a href="https://discord.com/channels/1520945955375943822"><img alt="Open Discord (existing members)" src="https://img.shields.io/badge/Discord-open%20community-5865F2?style=for-the-badge&amp;logo=discord&amp;logoColor=white"></a>
+  <a href="https://github.com/koolaid-dotcom/Maytrix-Mods/actions/workflows/build.yml"><img alt="Build status" src="https://github.com/koolaid-dotcom/Maytrix-Mods/actions/workflows/build.yml/badge.svg?branch=main"></a>
+  <img alt="PCVR" src="https://img.shields.io/badge/target-PCVR-8b5cf6?style=for-the-badge">
+  <img alt="Local only" src="https://img.shields.io/badge/privacy-local%20only-2563eb?style=for-the-badge">
+</p>
+
+<p align="center">
+  <a href="https://github.com/koolaid-dotcom/Maytrix-Mods/releases/tag/v0.3.0"><strong>Download v0.3.0</strong></a> ·
+  <a href="#install-for-testing">Install</a> ·
+  <a href="#categories">Features</a> ·
+  <a href="#controls">Controls</a> ·
+  <a href="https://discord.com/channels/1520945955375943822"><strong>Discord</strong></a> ·
+  <a href="CHANGELOG.md">Changelog</a> ·
+  <a href="https://github.com/koolaid-dotcom/Maytrix-Mods/issues">Issues</a> ·
+  <a href="#build">Build</a>
+</p>
+
+---
+
+> [!IMPORTANT]
+> **Version 0.3.0 is a PCVR beta.** Both build modes pass with zero warnings, including validation against the currently installed game and BepInEx files. Real-headset testing is still required before a stable release.
+
+Maytrix contains no gameplay cheats, player targeting, anti-cheat bypasses, room disruption, telemetry, or background network requests.
 
 ## At a glance
 
@@ -80,10 +110,11 @@ Maytrix captures Performance and Lighting separately, applies only local Unity q
 ## Install for testing
 
 1. Use a legitimate BepInEx 5 setup for a compatible Unity Mono PCVR game.
-2. Create `BepInEx/plugins/Maytrix Menu/`.
-3. Copy only `Maytrix-Menu.dll` into that folder.
-4. Start the game and check the BepInEx log for `Maytrix Menu 0.3.0 loaded`.
-5. Hold the left controller primary button, aim with the right controller, and press trigger.
+2. Download [Maytrix Menu v0.3.0 Beta](https://github.com/koolaid-dotcom/Maytrix-Mods/releases/tag/v0.3.0). If upgrading from v0.2.0, read the cleanup note below before copying files.
+3. Extract the `Maytrix Menu` folder from `Maytrix-Menu-v0.3.0-Beta.zip` into `BepInEx/plugins/`.
+4. Confirm that `BepInEx/plugins/Maytrix Menu/Maytrix-Menu.dll` exists.
+5. Start the game and check the BepInEx log for `Maytrix Menu 0.3.0 loaded`.
+6. Hold the left controller primary button, aim with the right controller, and press trigger.
 
 ### Upgrading from v0.2.0
 
