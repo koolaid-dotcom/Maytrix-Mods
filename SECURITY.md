@@ -2,16 +2,16 @@
 
 ## Supported version
 
-Only the latest source on `main` is considered for security fixes while Maytrix is in preview.
+Security fixes are considered for the latest beta release and the current `main` branch.
 
 ## Reporting a problem
 
 Do not post passwords, tokens, private logs, personal information, or detailed exploit steps in a public issue.
 
-For a sensitive report, contact the repository owner through GitHub first with a short, non-sensitive description. For ordinary bugs without sensitive information, use the bug-report template.
+Use **Security → Report a vulnerability** on GitHub when that option is available. If it is unavailable, open a short issue asking the repository owner for a private reporting route without including sensitive details. Ordinary bugs without sensitive information should use the bug-report template.
 
 ## Project behavior
 
-The current scaffold does not collect telemetry or send background web requests. Network navigation occurs only when a user deliberately selects a Community link.
+Maytrix stores local settings through BepInEx and sends no telemetry or background network requests. The fixed Discord and GitHub links open only after deliberate in-menu confirmation.
 
 Never upload unofficial DLLs to this repository or label an unverified binary as an official Maytrix release.

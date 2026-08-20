@@ -1,23 +1,25 @@
-# Maytrix Mod Menu v0.2.0 Beta
+# Maytrix Menu v0.3.0 Beta
 
-This is the first automated drag-and-drop Maytrix build. GitHub Actions compiles the source before the release is created.
+This beta introduces the complete square category menu with Discord, Performance, Lighting, Appearance, Controls, and Help & About sections.
 
-## Included
+## Download choice
 
-- Hold-to-open left-controller menu
-- Right-controller pointer and trigger selection by default
-- Live FPS/frame-time and controller-input displays
-- Four original Maytrix color themes
-- High contrast, large text, reduced motion, haptics, and tooltips
-- Pointer hand, length, tilt, panel size, follow speed, and anchor controls
-- Saved interface preferences, comfort preset, and full reset
-- Explicit Discord and GitHub links
+- Most testers should use `Maytrix-Menu-v0.3.0-Beta.zip` and copy its `Maytrix Menu` folder into `BepInEx/plugins/`.
+- Developers should use `Maytrix-Menu-v0.3.0-Source.zip`.
+- The direct `Maytrix-Menu.dll` is provided for manual installation.
 
-## Install
+## Upgrading from v0.2.0
 
-1. Install a compatible BepInEx 5 setup for the Windows PC version of Gorilla Tag.
-2. Download `Maytrix Mods.dll` or the ZIP from this release.
-3. Put `Maytrix Mods.dll` in `Gorilla Tag/BepInEx/plugins/Maytrix Mods/`.
-4. Start the game, hold the left controller primary/menu button, point with the right controller, and press the right trigger.
+Close the game and remove `BepInEx/plugins/Maytrix Mods/Maytrix Mods.dll` before copying the new `Maytrix Menu` folder. The plugin identity is preserved, but the DLL and folder names changed; do not leave both versions installed.
 
-This beta is compiled automatically but still needs real-headset compatibility reports. It contains local interface features only and is intended for private or properly modded environments.
+## Important behavior
+
+- Discord and GitHub open only after an in-menu two-press confirmation.
+- FPS Goal controls Maytrix's local optimizer target; it does not change internet speed or force the headset refresh rate.
+- Auto Optimize uses headset-aware frame timing and reversible render-scale adjustments.
+- Unused-memory cleanup is manual, confirmed, single-flight, and limited to once per 60 seconds.
+- Lighting and Performance capture, own, and restore their settings separately.
+
+## Beta limitation
+
+The source passes compile, formatting, dependency, and safety checks, including compilation against the currently installed game files. Real-headset layout, controller, focus-return, graphics, and comfort testing remains required before a stable release.

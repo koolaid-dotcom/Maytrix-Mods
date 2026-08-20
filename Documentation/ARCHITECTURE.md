@@ -1,34 +1,31 @@
 # Architecture
 
-Maytrix is intentionally small and uses only BepInEx plus stable Unity APIs.
+Maytrix is a local BepInEx 5 plugin built from small services and Unity's standard XR APIs. It does not depend on Harmony, Photon, game assemblies, player APIs, or networking clients.
 
 ## Runtime flow
 
-1. `Plugin` is loaded by BepInEx.
-2. `MenuManager` owns the menu lifecycle.
-3. `MaytrixMenu` builds and updates the world-space interface.
-4. `MenuItem` stores each card's label, state, kind, and action.
-5. GitHub Actions performs a clean compile and packages only the Maytrix DLL, README, and license.
+1. `Plugin` creates settings, graphics, and menu services.
+2. `LocalGraphicsController` samples local frame timing and owns reversible visual overrides.
+3. `XrPoseResolver` converts controller and headset tracking into world-space poses.
+4. `MenuController` handles pages, visibility, confirmations, and collider-free pointer hit tests.
+5. `FpsHud` optionally presents a head-locked, low-frequency FPS display.
+6. Disposal restores every graphics value Maytrix still owns and destroys only Maytrix-created objects.
 
 ## Main areas
 
 | Path | Purpose |
-| --- | --- |
-| `Plugin.cs` | BepInEx entry point |
-| `PluginInfo.cs` | Identity, version, and public links |
-| `Managers/` | Runtime ownership and lifecycle |
-| `Menu/` | Layout, interaction, rendering, and menu data |
-| `Mods/` | Extension guidance for future feature modules |
-| `References/` | Instructions for local-only game dependencies |
-| `Resources/` | Project-owned branding and media |
+|---|---|
+| `Plugin.cs` | BepInEx lifecycle entry point |
+| `Menu/` | Square UI, controller interaction, themes, settings, and FPS HUD |
+| `Services/` | Frame sampling and reversible performance/lighting ownership |
+| `References/` | Local-only build reference guidance |
+| `Documentation/` | Architecture and compatibility notes |
 
 ## Design rules
 
-- Keep the entry point small.
-- Keep feature state out of rendering code when practical.
-- Reuse materials and avoid per-frame allocations.
-- Convert XR tracking poses into world space before positioning UI.
-- Treat external links as explicit user actions.
-- Do not add hidden telemetry or disruptive public-room behavior.
-- Keep every visible card connected to a real local effect.
-- Publish a binary only after the automated build succeeds.
+- Keep every action local, explicit, and reversible.
+- Never scan player files or use player/network APIs.
+- Never let menu hit testing interact with game colliders.
+- Require fresh trigger presses and confirmations for external or reset actions.
+- Ignore unfocused/background frame samples.
+- Publish from an exact version tag only after CI passes.

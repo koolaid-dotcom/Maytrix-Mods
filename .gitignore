@@ -1,8 +1,9 @@
+.vs/
 bin/
 obj/
-.vs/
-.idea/
 *.user
 *.suo
-*.dll
 *.pdb
+*.zip
+References/*.dll
+!References/README.md

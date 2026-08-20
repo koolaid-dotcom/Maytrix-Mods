@@ -4,21 +4,21 @@ title: "[Bug]: "
 body:
   - type: markdown
     attributes:
-      value: Thanks for helping improve the Maytrix preview. Do not include credentials, personal information, or third-party DLLs.
+      value: Thanks for helping improve the Maytrix beta. Do not include credentials, personal information, or third-party DLLs.
   - type: input
     id: commit
     attributes:
       label: Version or commit
       description: Which Maytrix version or commit did you test?
-      placeholder: 0.1.0 or commit SHA
+      placeholder: 0.3.0 or commit SHA
     validations:
       required: true
   - type: input
     id: environment
     attributes:
       label: Environment
-      description: Include the game, loader, headset, and XR runtime versions when relevant.
-      placeholder: Windows 11, BepInEx ..., Quest through Link ...
+      description: Include the game, BepInEx, headset, controller, and XR runtime versions when relevant.
+      placeholder: Windows 11, BepInEx 5, Quest through Link, SteamVR
     validations:
       required: true
   - type: textarea
@@ -34,7 +34,7 @@ body:
       label: Reproduction steps
       description: List the smallest safe sequence that reproduces the bug.
       placeholder: |
-        1. Build ...
+        1. Install ...
         2. Open ...
         3. Select ...
     validations:
@@ -43,7 +43,7 @@ body:
     id: logs
     attributes:
       label: Relevant logs
-      description: Paste only the relevant lines after removing usernames, paths, tokens, and personal information.
+      description: Paste only relevant lines after removing usernames, paths, tokens, and personal information.
       render: shell
   - type: checkboxes
     id: checks
