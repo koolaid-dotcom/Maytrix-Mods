@@ -1,4 +1,4 @@
-name: Build Maytrix
+name: Build Maytrix Menu
 
 on:
   pull_request:
@@ -11,10 +11,8 @@ permissions:
 
 jobs:
   build:
-    name: Compile and package
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -24,66 +22,18 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Restore dependencies
-        run: dotnet restore MaytrixMods.sln -p:UseLocalGameAssemblies=false
+      - name: Restore compile-only references
+        run: dotnet restore MaytrixMenu.sln -p:UseLocalGameAssemblies=false
 
-      - name: Build release DLL
-        run: dotnet build MaytrixMods.sln -c Release --no-restore -p:UseLocalGameAssemblies=false -p:ContinuousIntegrationBuild=true
+      - name: Build menu
+        run: dotnet build MaytrixMenu.sln -c Release --no-restore -p:UseLocalGameAssemblies=false -p:ContinuousIntegrationBuild=true -p:TreatWarningsAsErrors=true
 
-      - name: Package drag-and-drop download
-        shell: bash
-        run: |
-          mkdir -p "dist/Maytrix Mod Menu"
-          cp "bin/Release/netstandard2.1/Maytrix Mods.dll" "dist/Maytrix Mod Menu/"
-          cp README.md LICENSE "dist/Maytrix Mod Menu/"
-          cd dist
-          zip -r "Maytrix-Mod-Menu-v0.2.0.zip" "Maytrix Mod Menu"
+      - name: Verify formatting
+        run: dotnet format MaytrixMenu.sln --verify-no-changes --no-restore
 
-      - name: Upload verified build artifact
+      - name: Upload DLL
         uses: actions/upload-artifact@v4
         with:
-          name: Maytrix-Mod-Menu-v0.2.0
-          path: dist/Maytrix-Mod-Menu-v0.2.0.zip
+          name: Maytrix-Menu
+          path: bin/Release/netstandard2.1/Maytrix-Menu.dll
           if-no-files-found: error
-
-  release:
-    name: Publish verified beta
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[release v0.2.0]')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Check out release notes
-        uses: actions/checkout@v4
-
-      - name: Download verified build
-        uses: actions/download-artifact@v4
-        with:
-          name: Maytrix-Mod-Menu-v0.2.0
-          path: dist
-
-      - name: Extract direct DLL asset
-        shell: bash
-        run: unzip -j "dist/Maytrix-Mod-Menu-v0.2.0.zip" "Maytrix Mod Menu/Maytrix Mods.dll" -d dist
-
-      - name: Create v0.2.0 beta release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          if gh release view "v0.2.0" >/dev/null 2>&1; then
-            gh release upload "v0.2.0" \
-              "dist/Maytrix-Mod-Menu-v0.2.0.zip" \
-              "dist/Maytrix Mods.dll" \
-              --clobber
-          else
-            gh release create "v0.2.0" \
-              "dist/Maytrix-Mod-Menu-v0.2.0.zip" \
-              "dist/Maytrix Mods.dll" \
-              --target "$GITHUB_SHA" \
-              --title "Maytrix Mod Menu v0.2.0 Beta" \
-              --notes-file RELEASE_NOTES.md \
-              --prerelease
-          fi

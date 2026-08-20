@@ -1,12 +1,14 @@
 using System;
 
-namespace MaytrixMods
+namespace Maytrix.Menu.Menu
 {
     internal enum MenuItemKind
     {
-        Toggle,
         Action,
-        Link
+        Navigation,
+        External,
+        Destructive,
+        Info
     }
 
     internal sealed class MenuItem
@@ -14,39 +16,34 @@ namespace MaytrixMods
         public MenuItem(
             string label,
             string description,
-            MenuItemKind kind = MenuItemKind.Toggle,
-            Action<MenuItem>? onPressed = null,
-            Func<string>? valueProvider = null)
+            Action activate,
+            Func<string>? valueText = null,
+            MenuItemKind kind = MenuItemKind.Action,
+            Func<bool>? isEnabled = null)
         {
             Label = label;
             Description = description;
+            Activate = activate;
+            ValueText = valueText;
             Kind = kind;
-            OnPressed = onPressed;
-            ValueProvider = valueProvider;
+            IsEnabled = isEnabled;
         }
 
         public string Label { get; }
         public string Description { get; }
+        public Action Activate { get; }
+        public Func<string>? ValueText { get; }
         public MenuItemKind Kind { get; }
-        public bool Enabled { get; set; }
-        public Action<MenuItem>? OnPressed { get; }
-        public Func<string>? ValueProvider { get; }
+        public Func<bool>? IsEnabled { get; }
+        public bool Enabled => IsEnabled == null || IsEnabled();
 
         public string DisplayLabel
         {
             get
             {
-                string? value = ValueProvider?.Invoke();
-                return string.IsNullOrWhiteSpace(value) ? Label : $"{Label}\n{value}";
+                var value = ValueText?.Invoke();
+                return string.IsNullOrWhiteSpace(value) ? Label : $"{Label}: {value}";
             }
-        }
-
-        public void Press()
-        {
-            if (Kind == MenuItemKind.Toggle)
-                Enabled = !Enabled;
-
-            OnPressed?.Invoke(this);
         }
     }
 }

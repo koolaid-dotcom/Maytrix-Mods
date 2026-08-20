@@ -1,15 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>Maytrix Mods</AssemblyName>
-    <RootNamespace>MaytrixMods</RootNamespace>
-    <Version>0.2.0</Version>
-    <Description>Original controller-first world-space interface for Maytrix Mods.</Description>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>Maytrix-Menu</AssemblyName>
+    <RootNamespace>Maytrix.Menu</RootNamespace>
+    <Version>0.3.0</Version>
+    <Description>Controller-first local settings, accessibility, performance, and lighting menu for Unity PCVR.</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <InstallAfterBuild Condition="'$(InstallAfterBuild)' == ''">false</InstallAfterBuild>
     <GorillaTagPath Condition="'$(GorillaTagPath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Gorilla Tag</GorillaTagPath>
     <UseLocalGameAssemblies Condition="'$(UseLocalGameAssemblies)' == '' and Exists('$(GorillaTagPath)\BepInEx\core\BepInEx.dll')">true</UseLocalGameAssemblies>
     <UseLocalGameAssemblies Condition="'$(UseLocalGameAssemblies)' == ''">false</UseLocalGameAssemblies>
@@ -41,6 +39,14 @@
       <HintPath>$(GorillaTagPath)\Gorilla Tag_Data\Managed\UnityEngine.XRModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.VRModule">
+      <HintPath>$(GorillaTagPath)\Gorilla Tag_Data\Managed\UnityEngine.VRModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.SubsystemsModule">
+      <HintPath>$(GorillaTagPath)\Gorilla Tag_Data\Managed\UnityEngine.SubsystemsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup Condition="'$(UseLocalGameAssemblies)' != 'true'">
@@ -48,8 +54,8 @@
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.33" IncludeAssets="compile" PrivateAssets="all" />
   </ItemGroup>
 
-  <Target Name="CopyToBepInEx" AfterTargets="Build" Condition="'$(UseLocalGameAssemblies)' == 'true' and Exists('$(GorillaTagPath)\BepInEx\plugins')">
-    <MakeDir Directories="$(GorillaTagPath)\BepInEx\plugins\Maytrix Mods" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GorillaTagPath)\BepInEx\plugins\Maytrix Mods" />
+  <Target Name="CopyToBepInEx" AfterTargets="Build" Condition="'$(UseLocalGameAssemblies)' == 'true' and '$(InstallAfterBuild)' == 'true' and Exists('$(GorillaTagPath)\BepInEx\plugins')">
+    <MakeDir Directories="$(GorillaTagPath)\BepInEx\plugins\Maytrix Menu" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GorillaTagPath)\BepInEx\plugins\Maytrix Menu" />
   </Target>
 </Project>

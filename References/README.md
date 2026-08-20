@@ -1,15 +1,17 @@
 # Local references
 
-For normal development, Maytrix compiles against assemblies from a local Gorilla Tag and BepInEx installation.
+Do not commit or distribute game, Unity, or BepInEx DLLs. Maytrix references the Unity facade plus only the Core, Physics, Text Rendering, XR, VR, and Subsystems modules it needs; all remain external at runtime.
 
-Do not commit those DLLs. They may be copyrighted, version-specific, or unsafe if obtained from an unofficial source.
-
-Set the local path during build:
+Validate against a legitimate local installation without installing:
 
 ```powershell
-dotnet build MaytrixMods.sln -c Release -p:GorillaTagPath="D:\SteamLibrary\steamapps\common\Gorilla Tag"
+dotnet build MaytrixMenu.sln -c Release -p:GorillaTagPath="D:\SteamLibrary\steamapps\common\Gorilla Tag" -p:InstallAfterBuild=false -p:TreatWarningsAsErrors=true
 ```
 
-The project file resolves the required assemblies beneath that directory.
+Compile without local game files:
 
-When those files are unavailable, such as in GitHub Actions, the project uses compile-only `BepInEx.Core` and `UnityEngine.Modules` package references. Those packages are not copied into `Maytrix Mods.dll` or the release ZIP. A local game build remains the best compatibility check because it uses the assemblies from the exact installed game version.
+```powershell
+dotnet build MaytrixMenu.sln -c Release -p:UseLocalGameAssemblies=false -p:TreatWarningsAsErrors=true
+```
+
+Add `-p:InstallAfterBuild=true` only after source review and real-headset testing, when you intentionally want the output copied to `BepInEx/plugins/Maytrix Menu/`.

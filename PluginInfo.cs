@@ -1,13 +1,10 @@
-namespace MaytrixMods
+namespace Maytrix.Menu
 {
     internal static class PluginInfo
     {
+        // Keep the v0.2 GUID so BepInEx treats v0.3 as an upgrade of the same plugin.
         public const string Guid = "com.maytrixmods.menu";
-        public const string Name = "Maytrix Mod Menu";
-        public const string Version = "0.2.0";
-
-        // Replace this with a public discord.gg invite when one is available.
-        public const string DiscordUrl = "https://discord.com/channels/1520945955375943822";
-        public const string RepositoryUrl = "https://github.com/koolaid-dotcom/Maytrix-Mods";
+        public const string Name = "Maytrix Menu";
+        public const string Version = "0.3.0";
     }
 }

@@ -1,8 +1,21 @@
 # Changelog
 
-All notable Maytrix Mod Menu changes will be recorded here.
+All notable Maytrix Menu changes are recorded here.
 
-## 0.2.0-beta — 2026-08-19
+## 0.3.0 Beta - 2026-08-19
+
+- Replaced the linear template with a square six-category Maytrix menu
+- Added explicit Discord and GitHub opening confirmations
+- Added smoothed FPS/frame-time reporting and an optional FPS HUD
+- Added configurable optimizer goals and reversible render-scale profiles
+- Added conservative automatic low-FPS optimization with warm-up and cooldowns
+- Added manual unused-asset cleanup with single-flight and 60-second protection
+- Added Smooth, Normal, Rough, and exact-value Reset Lighting controls
+- Added themes, accents, text sizing, menu sizing, pointer sizing, handedness, placement, smoothing, angle calibration, and haptics
+- Added page navigation, trigger arming, action debounce, confirmations, toasts, and persistent configuration
+- Added captured graphics restoration on reset, scene change, and plugin disposal
+
+## 0.2.0 Beta - 2026-08-19
 
 ### Added
 
@@ -21,10 +34,10 @@ All notable Maytrix Mod Menu changes will be recorded here.
 
 ### Validation
 
-- Source is compiled by GitHub Actions before an artifact or release is published
-- Real-headset and current-game-version compatibility reports are still requested
+- Source was compiled by GitHub Actions before an artifact or release was published
+- Real-headset and current-game-version compatibility reports were still requested
 
-## 0.1.0-preview — 2026-08-19
+## 0.1.0 Preview - 2026-08-19
 
 ### Added
 
@@ -38,6 +51,6 @@ All notable Maytrix Mod Menu changes will be recorded here.
 
 ### Known limitations
 
-- No compiled public build is available yet
-- In-game validation against the current Gorilla Tag and BepInEx versions is pending
-- The supplied Discord address is a server route for existing members, not a public invite
+- No compiled public build was available
+- In-game validation against the current game and BepInEx versions was pending
+- The supplied Discord address was a server route for existing members, not a public invite

@@ -1,139 +1,145 @@
-<p align="center">
-  <img src="Resources/maytrix-banner.png" alt="Maytrix Mod Menu banner" width="900">
-</p>
+# Maytrix Menu
 
-<h1 align="center">Maytrix Mod Menu</h1>
+A polished, controller-first square menu for local PCVR settings, accessibility, performance monitoring, and reversible visual presets. Maytrix contains no gameplay cheats, player targeting, anti-cheat bypasses, room disruption, telemetry, or background network requests.
 
-<p align="center">
-  A polished, original, controller-first world-space menu for the Maytrix Mods project.
-</p>
+> **Beta status:** both build modes pass with zero warnings, including a build against the currently installed Gorilla Tag/BepInEx files. A real-headset test is still required before publishing this as a stable release.
 
-<p align="center">
-  <a href="https://github.com/koolaid-dotcom/Maytrix-Mods/releases/latest"><img alt="Version 0.2.0 Beta" src="https://img.shields.io/badge/version-0.2.0%20beta-19d8ff?style=for-the-badge"></a>
-  <a href="https://github.com/koolaid-dotcom/Maytrix-Mods/actions/workflows/build.yml"><img alt="Automated build" src="https://github.com/koolaid-dotcom/Maytrix-Mods/actions/workflows/build.yml/badge.svg"></a>
-  <img alt="PCVR target" src="https://img.shields.io/badge/target-PCVR-8b5cf6?style=for-the-badge">
-  <img alt="Local interface features" src="https://img.shields.io/badge/features-local%20UI-2563eb?style=for-the-badge">
-</p>
+## At a glance
 
-<p align="center">
-  <a href="#install">Install</a> ·
-  <a href="#controls">Controls</a> ·
-  <a href="#working-features">Features</a> ·
-  <a href="CHANGELOG.md">Changelog</a> ·
-  <a href="https://github.com/koolaid-dotcom/Maytrix-Mods/issues">Issues</a> ·
-  <a href="https://discord.com/channels/1520945955375943822">Discord</a>
-</p>
+| Item | Details |
+|---|---|
+| Menu | Square world-space panel with six categories |
+| Open | Hold the menu-hand primary button |
+| Select | Aim with the opposite hand and press its trigger |
+| Platform | Unity Mono PCVR with BepInEx 5 |
+| Version | 0.3.0 Beta |
+| Privacy | Local settings only; no telemetry or background requests |
 
----
+## Categories
 
-Maytrix Mod Menu uses an original navy, cyan, and violet design with a left-hand panel and right-hand laser pointer. Version 0.2.0 replaces the old demonstration placeholders with working local interface controls and an automated build-and-release pipeline.
+### Discord
 
-> [!IMPORTANT]
-> **This is a PCVR beta.** GitHub Actions compiles the DLL before publishing it, but real-headset compatibility can still change when Gorilla Tag, Unity, or BepInEx updates. Please report your exact headset/runtime and attach the BepInEx log when filing a bug.
+- Opens the existing-members Maytrix Discord page only after a deliberate two-press confirmation
+- Uses the fixed address `https://discord.com/channels/1520945955375943822`
+- Opens the PC's default browser; Maytrix never reads Discord login details or tokens
+- Includes an explicit GitHub button with the same confirmation behavior
 
-## Install
+### Performance
 
-1. Install a compatible **BepInEx 5** setup for the Windows PC version of Gorilla Tag.
-2. Open the [latest Maytrix release](https://github.com/koolaid-dotcom/Maytrix-Mods/releases/latest).
-3. Download `Maytrix Mods.dll` or extract the release ZIP.
-4. Put the DLL here:
+- Smoothed FPS and frame-time display
+- Optional floating FPS counter
+- Custom optimizer goals: 72, 80, 90, or 120 FPS
+- Original, Balanced, and Performance render-scale profiles
+- Optional Auto Optimize with warm-up, sustained-low-FPS detection, cooldowns, and gradual recovery
+- Manual unused-memory cleanup with single-flight protection and a 60-second cooldown
+- Full performance reset
 
-```text
-Gorilla Tag/BepInEx/plugins/Maytrix Mods/Maytrix Mods.dll
-```
+Internet speed does not determine rendering FPS. Maytrix performs no speed test and sends no network request. The FPS Goal guides local quality adjustment; it does not force a headset refresh rate. The XR runtime remains in control of the headset's actual refresh rate.
 
-5. Start the game. BepInEx loads Maytrix automatically.
+### Lighting
 
-No installer, account, telemetry service, or extra Maytrix dependency is included.
+- Smooth Lighting: softer, higher-quality local lighting
+- Normal Lighting: balanced local lighting
+- Rough Lighting: simpler, lower-cost local lighting
+- Reset Lighting: confirmed restoration of the exact captured game values
 
-## Controls
+Maytrix captures Performance and Lighting separately, applies only local Unity quality settings, and restores values it still owns when reset, unloaded, or moved to a new scene.
 
-| Action | Control |
-| --- | --- |
-| Show the menu | Hold the left controller primary button or menu button |
-| Hide the menu | Release that left controller button |
-| Aim | Point the right controller |
-| Press a card | Right trigger |
-| Optional left-handed aiming | Enable **Left-Hand Pointer**, then use left trigger |
+### Appearance
 
-## Working features
+- Midnight, Neon, and High Contrast themes
+- Cyan, Purple, Emerald, and Amber accents
+- Three text sizes
+- Three menu sizes
+- Thin, Normal, and Bold pointers
 
-<details open>
-<summary><strong>Interface and information</strong></summary>
+### Controls
 
-- Live smoothed FPS and frame-time display
-- Live left/right primary, trigger, and grip input monitor
-- Four original palettes: Neon, Aurora, Sunset, and Ice
-- High-contrast mode, large text, minimal mode, and optional tooltips
-- Soft-glow accent rail and pointer styling
-- Saved interface choices and last-page memory
+- Left- or right-hand menu placement; the opposite controller becomes the pointer
+- Close, Normal, and Far placement
+- Smoothed menu following
+- Pointer-angle calibration from -30 to +30 degrees
+- Optional selection haptics
 
-</details>
+### Help & About
 
-<details>
-<summary><strong>Controls and comfort</strong></summary>
+- In-menu controls guide
+- Version, privacy, and safety information
+- Confirmed Reset Everything action
 
-- Right- or left-controller selection beam
-- Short, normal, and long pointer distances
-- Five pointer-tilt adjustments for different controller aim poses
-- Small, medium, and large panel sizes
-- Smooth, balanced, and snappy panel following
-- Wrist, palm, and floating panel anchors
-- Toggleable haptics and hover animation
-- Reduced-motion mode and a one-press comfort preset
-- Full reset to safe defaults
+## Interaction safeguards
 
-</details>
+- Opening while the trigger is held cannot activate a button until release and a fresh press
+- Page changes and confirmed actions re-arm the trigger
+- External and reset actions require two presses within five seconds
+- Actions have a 250 ms debounce
+- Tracking loss hides the menu and clears confirmations
+- The pointer uses collider-free local button hit tests and never queries game-world colliders
+- Text refreshes four times per second instead of rebuilding the menu every frame
 
-<details>
-<summary><strong>Community</strong></summary>
+## Install for testing
 
-- Explicit cards for the Maytrix GitHub repository and configured Discord route
-- Built-in control guide, credits, and version information
-- No background network requests; links open only after you press them
+1. Use a legitimate BepInEx 5 setup for a compatible Unity Mono PCVR game.
+2. Create `BepInEx/plugins/Maytrix Menu/`.
+3. Copy only `Maytrix-Menu.dll` into that folder.
+4. Start the game and check the BepInEx log for `Maytrix Menu 0.3.0 loaded`.
+5. Hold the left controller primary button, aim with the right controller, and press trigger.
 
-</details>
+### Upgrading from v0.2.0
 
-## Build from source
+Close the game and remove the old `BepInEx/plugins/Maytrix Mods/Maytrix Mods.dll` before copying the new `Maytrix Menu` folder. Version 0.3.0 keeps the existing BepInEx plugin identity for upgrade compatibility, but the DLL and install-folder names changed; leaving both copies installed can cause duplicate-plugin errors.
 
-The project can compile in two modes:
+Do not copy Unity, BepInEx, or game DLLs from the build folder. Controller names and behavior vary by headset/runtime, so complete the real-headset checklist in `VALIDATION.md` before publishing.
 
-- On a development PC with Gorilla Tag installed, it uses the local game and BepInEx assemblies.
-- In GitHub Actions, it uses pinned compile-only BepInEx and Unity reference packages and never bundles those dependencies into the plugin.
+Settings are saved in the BepInEx configuration for `com.maytrixmods.menu`.
+
+## Build
+
+Requires the .NET 8 SDK or newer.
+
+Compile without local game files:
 
 ```powershell
-git clone https://github.com/koolaid-dotcom/Maytrix-Mods.git
-cd Maytrix-Mods
-dotnet build MaytrixMods.sln -c Release
+dotnet restore MaytrixMenu.sln -p:UseLocalGameAssemblies=false
+dotnet build MaytrixMenu.sln -c Release --no-restore -p:UseLocalGameAssemblies=false -p:TreatWarningsAsErrors=true
 ```
 
-For a different Steam library:
+Validate against a legitimate local installation without installing anything:
 
 ```powershell
-dotnet build MaytrixMods.sln -c Release -p:GorillaTagPath="D:\SteamLibrary\steamapps\common\Gorilla Tag"
+dotnet build MaytrixMenu.sln -c Release -p:GorillaTagPath="D:\SteamLibrary\steamapps\common\Gorilla Tag" -p:InstallAfterBuild=false -p:TreatWarningsAsErrors=true
 ```
 
-A successful local build copies the plugin to `BepInEx\plugins\Maytrix Mods\` when that folder exists. Otherwise the DLL is in `bin\Release\netstandard2.1\`.
+After reviewing and headset-testing the source, installation can be explicitly enabled:
 
-See [Architecture](Documentation/ARCHITECTURE.md), [Compatibility](Documentation/COMPATIBILITY.md), and [Local References](References/README.md) for details.
+```powershell
+dotnet build MaytrixMenu.sln -c Release -p:GorillaTagPath="D:\SteamLibrary\steamapps\common\Gorilla Tag" -p:InstallAfterBuild=true
+```
 
-## Privacy, safety, and originality
+The DLL is written to `bin/Release/netstandard2.1/Maytrix-Menu.dll`. Automatic installation is off by default.
 
-Maytrix contains no telemetry, analytics, advertising, account system, remote configuration, anti-cheat bypass, or hidden web requests. It is designed for local interface customization in private or properly modded environments. Respect other players, the game's rules, and platform policies.
+## Project map
 
-Maytrix is an independent community project and is not affiliated with, sponsored by, or endorsed by Another Axiom. Gorilla Tag and related names belong to their respective owners.
+| File | Purpose |
+|---|---|
+| `Plugin.cs` | Starts and safely disposes the menu and graphics services |
+| `Menu/MenuController.cs` | Square category UI, navigation, pointer interaction, confirmations, and links |
+| `Menu/FpsHud.cs` | Optional local FPS and frame-time overlay |
+| `Menu/MenuSettings.cs` | Persistent settings with safe value limits |
+| `Menu/XrPoseResolver.cs` | Converts headset/controller tracking poses into world space |
+| `Services/LocalGraphicsController.cs` | Headset-aware FPS sampling, render profiles, lighting snapshots, restoration, and cleanup cooldown |
+| `VALIDATION.md` | Completed automated checks and required headset tests |
+| `.github/workflows/build.yml` | Compile-only GitHub Actions validation |
+| `.github/workflows/release.yml` | Tag-driven beta packaging and prerelease publishing |
 
-The Maytrix interface, banner, branding, and source are original. Seralyth code, artwork, logos, branding, donation information, and binaries are not included.
+## Safety boundary
 
-## Contact
+Appropriate additions include local interface appearance, accessibility, controller comfort, diagnostics, and reversible graphics settings.
 
-- [GitHub repository](https://github.com/koolaid-dotcom/Maytrix-Mods)
-- [Bug reports and feature requests](https://github.com/koolaid-dotcom/Maytrix-Mods/issues)
-- [Configured Discord server route](https://discord.com/channels/1520945955375943822)
+Do not add movement advantages, fly, noclip, platforms, invisibility, teleporting, forced interactions, player/file scanning, anti-cheat bypasses, hidden web requests, or copied code/assets without permission.
 
-> [!NOTE]
-> The supplied Discord URL works for existing server members; it is not a public `discord.gg` invitation. Replace it with a public invite when one is available.
+Use modifications only where the game and platform permit them. Maytrix is independent and is not affiliated with or endorsed by Another Axiom or Discord.
 
 ## License
 
-Copyright © 2026 Maytrix Mods. See [LICENSE](LICENSE) for the repository's terms.
+Maytrix is source-available under the repository's custom all-rights-reserved `LICENSE`, including its limited contribution exception. It is not open source. Read the license before copying, modifying, or redistributing the project. Third-party game, Unity, BepInEx, Discord, and GitHub names or assets are not included or claimed.

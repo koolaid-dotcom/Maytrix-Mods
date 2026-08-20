@@ -1,0 +1,118 @@
+name: Publish Maytrix Menu beta
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Require tag and project versions to match
+        shell: bash
+        run: |
+          project_version="$(sed -n 's:.*<Version>\([^<]*\)</Version>.*:\1:p' MaytrixMenu.csproj | head -n 1)"
+          tag_version="${GITHUB_REF_NAME#v}"
+          if [ "$project_version" != "$tag_version" ]; then
+            echo "Tag $tag_version does not match project version $project_version."
+            exit 1
+          fi
+
+      - name: Restore compile-only references
+        run: dotnet restore MaytrixMenu.sln -p:UseLocalGameAssemblies=false
+
+      - name: Build verified source
+        run: dotnet build MaytrixMenu.sln -c Release --no-restore -p:UseLocalGameAssemblies=false -p:ContinuousIntegrationBuild=true -p:TreatWarningsAsErrors=true
+
+      - name: Verify formatting
+        run: dotnet format MaytrixMenu.sln --verify-no-changes --no-restore
+
+      - name: Create release files
+        shell: bash
+        run: |
+          mkdir -p "release/bundle/Maytrix Menu"
+          cp "bin/Release/netstandard2.1/Maytrix-Menu.dll" "release/bundle/Maytrix Menu/"
+          cp README.md RELEASE_NOTES.md CHANGELOG.md VALIDATION.md LICENSE "release/bundle/Maytrix Menu/"
+          cp "bin/Release/netstandard2.1/Maytrix-Menu.dll" "release/Maytrix-Menu.dll"
+          cp README.md "release/Maytrix-Menu-${GITHUB_REF_NAME}-README.md"
+          cp RELEASE_NOTES.md "release/Maytrix-Menu-${GITHUB_REF_NAME}-Release-Notes.md"
+          git archive --format=zip --prefix="Maytrix-Menu-${GITHUB_REF_NAME}/" --output="release/Maytrix-Menu-${GITHUB_REF_NAME}-Source.zip" HEAD
+          cd release/bundle
+          zip -r "../Maytrix-Menu-${GITHUB_REF_NAME}-Beta.zip" "Maytrix Menu"
+          cd ..
+          sha256sum \
+            "Maytrix-Menu-${GITHUB_REF_NAME}-Beta.zip" \
+            "Maytrix-Menu-${GITHUB_REF_NAME}-Source.zip" \
+            "Maytrix-Menu.dll" \
+            "Maytrix-Menu-${GITHUB_REF_NAME}-README.md" \
+            "Maytrix-Menu-${GITHUB_REF_NAME}-Release-Notes.md" \
+            > SHA256SUMS.txt
+
+      - name: Upload release files
+        uses: actions/upload-artifact@v4
+        with:
+          name: Maytrix-Menu-${{ github.ref_name }}
+          path: |
+            release/Maytrix-Menu-${{ github.ref_name }}-Beta.zip
+            release/Maytrix-Menu-${{ github.ref_name }}-Source.zip
+            release/Maytrix-Menu.dll
+            release/Maytrix-Menu-${{ github.ref_name }}-README.md
+            release/Maytrix-Menu-${{ github.ref_name }}-Release-Notes.md
+            release/SHA256SUMS.txt
+          if-no-files-found: error
+
+  publish:
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out release notes
+        uses: actions/checkout@v4
+
+      - name: Download verified files
+        uses: actions/download-artifact@v4
+        with:
+          name: Maytrix-Menu-${{ github.ref_name }}
+          path: release
+
+      - name: Create or synchronize the verified prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          assets=(
+            "release/Maytrix-Menu-${GITHUB_REF_NAME}-Beta.zip"
+            "release/Maytrix-Menu-${GITHUB_REF_NAME}-Source.zip"
+            "release/Maytrix-Menu.dll"
+            "release/Maytrix-Menu-${GITHUB_REF_NAME}-README.md"
+            "release/Maytrix-Menu-${GITHUB_REF_NAME}-Release-Notes.md"
+            "release/SHA256SUMS.txt"
+          )
+
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" \
+              --prerelease \
+              --title "Maytrix Menu ${GITHUB_REF_NAME} Beta" \
+              --notes-file RELEASE_NOTES.md
+            gh release upload "$GITHUB_REF_NAME" "${assets[@]}" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "${assets[@]}" \
+              --verify-tag \
+              --prerelease \
+              --title "Maytrix Menu ${GITHUB_REF_NAME} Beta" \
+              --notes-file RELEASE_NOTES.md
+          fi
