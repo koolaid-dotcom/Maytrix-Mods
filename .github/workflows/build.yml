@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
@@ -31,9 +33,145 @@ jobs:
       - name: Verify formatting
         run: dotnet format MaytrixMenu.sln --verify-no-changes --no-restore
 
-      - name: Upload DLL
+      - name: Record the verified DLL checksum
+        shell: bash
+        run: |
+          cd bin/Release/netstandard2.1
+          sha256sum Maytrix-Menu.dll > Maytrix-Menu.dll.sha256
+
+      - name: Upload verified DLL
         uses: actions/upload-artifact@v4
         with:
-          name: Maytrix-Menu
-          path: bin/Release/netstandard2.1/Maytrix-Menu.dll
+          name: Maytrix-Menu-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            bin/Release/netstandard2.1/Maytrix-Menu.dll
+            bin/Release/netstandard2.1/Maytrix-Menu.dll.sha256
           if-no-files-found: error
+
+  publish_verified_beta:
+    name: Publish verified v0.3.0 beta
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[publish beta]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: publish-v0.3.0
+      cancel-in-progress: false
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: v0.3.0
+    steps:
+      - name: Check out the verified merged commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Download the verified DLL from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: Maytrix-Menu-${{ github.run_id }}-${{ github.run_attempt }}
+          path: verified
+
+      - name: Verify source, merge, version, and DLL
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain --untracked-files=no)"
+          git show -s --format=%B "$GITHUB_SHA" | grep -Fq '[publish beta]'
+
+          project_version="$(sed -n 's:.*<Version>\([^<]*\)</Version>.*:\1:p' MaytrixMenu.csproj | head -n 1)"
+          test "$project_version" = "0.3.0"
+          grep -Fq 'public const string Version = "0.3.0";' PluginInfo.cs
+
+          cd verified
+          sha256sum -c Maytrix-Menu.dll.sha256
+          cd ..
+
+          merged_pr_count=0
+          for attempt in 1 2 3 4 5; do
+            merged_pr_count="$(
+              gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" |
+                jq --arg sha "$GITHUB_SHA" '[.[] | select(.merged_at != null and .base.ref == "main" and .merge_commit_sha == $sha)] | length'
+            )"
+            if [ "$merged_pr_count" = "1" ]; then
+              break
+            fi
+            sleep 5
+          done
+          test "$merged_pr_count" = "1"
+
+          existing_release_count="$(
+            gh api "repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
+              --jq '[.[] | select(.tag_name == "v0.3.0")] | length'
+          )"
+          test "$existing_release_count" = "0"
+
+      - name: Package the exact verified source and downloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "release/bundle/Maytrix Menu/Resources"
+          cp "verified/Maytrix-Menu.dll" "release/bundle/Maytrix Menu/"
+          cp README.md RELEASE_NOTES.md CHANGELOG.md VALIDATION.md LICENSE "release/bundle/Maytrix Menu/"
+          cp Resources/maytrix-banner.png "release/bundle/Maytrix Menu/Resources/"
+          cp "verified/Maytrix-Menu.dll" "release/Maytrix-Menu.dll"
+          cp README.md "release/Maytrix-Menu-${RELEASE_TAG}-README.md"
+          cp RELEASE_NOTES.md "release/Maytrix-Menu-${RELEASE_TAG}-Release-Notes.md"
+          git archive --format=zip --prefix="Maytrix-Menu-${RELEASE_TAG}/" --output="release/Maytrix-Menu-${RELEASE_TAG}-Source.zip" "$GITHUB_SHA"
+          cd release/bundle
+          zip -r "../Maytrix-Menu-${RELEASE_TAG}-Beta.zip" "Maytrix Menu"
+          cd ..
+          sha256sum \
+            "Maytrix-Menu-${RELEASE_TAG}-Beta.zip" \
+            "Maytrix-Menu-${RELEASE_TAG}-Source.zip" \
+            "Maytrix-Menu.dll" \
+            "Maytrix-Menu-${RELEASE_TAG}-README.md" \
+            "Maytrix-Menu-${RELEASE_TAG}-Release-Notes.md" \
+            > SHA256SUMS.txt
+          sha256sum -c SHA256SUMS.txt
+
+      - name: Create the immutable annotated tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          remote_object="$(git ls-remote --tags origin "refs/tags/${RELEASE_TAG}" | awk 'NR==1{print $1}')"
+          if [ -n "$remote_object" ]; then
+            remote_commit="$(git ls-remote --tags origin "refs/tags/${RELEASE_TAG}^{}" | awk 'NR==1{print $1}')"
+            test -n "$remote_commit"
+            test "$remote_commit" = "$GITHUB_SHA"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "$RELEASE_TAG" "$GITHUB_SHA" -m "Maytrix Menu $RELEASE_TAG Beta"
+            git push origin "refs/tags/${RELEASE_TAG}"
+            test "$(git ls-remote --tags origin "refs/tags/${RELEASE_TAG}^{}" | awk 'NR==1{print $1}')" = "$GITHUB_SHA"
+          fi
+
+      - name: Publish the v0.3.0 prerelease once
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "$RELEASE_TAG already exists; refusing to overwrite it."
+            exit 1
+          fi
+          gh release create "$RELEASE_TAG" \
+            "release/Maytrix-Menu-${RELEASE_TAG}-Beta.zip" \
+            "release/Maytrix-Menu-${RELEASE_TAG}-Source.zip" \
+            "release/Maytrix-Menu.dll" \
+            "release/Maytrix-Menu-${RELEASE_TAG}-README.md" \
+            "release/Maytrix-Menu-${RELEASE_TAG}-Release-Notes.md" \
+            "release/SHA256SUMS.txt" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --prerelease \
+            --latest=false \
+            --title "Maytrix Menu $RELEASE_TAG Beta" \
+            --notes-file RELEASE_NOTES.md
