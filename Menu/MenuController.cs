@@ -9,7 +9,7 @@ namespace Maytrix.Menu.Menu
 {
     internal sealed class MenuController : IDisposable
     {
-        private const string DiscordUrl = "https://discord.com/channels/1520945955375943822";
+        private const string DiscordUrl = "https://discord.com/channels/1540210584149295134";
         private const string GitHubUrl = "https://github.com/koolaid-dotcom/Maytrix-Mods";
         private const float PointerLength = 4f;
         private const float ActionDebounceSeconds = 0.25f;
