@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/koolaid-dotcom/Maytrix-Mods/releases/tag/v0.3.0"><img alt="Download v0.3.0 Beta" src="https://img.shields.io/badge/download-v0.3.0%20beta-19d8ff?style=for-the-badge&amp;logo=github&amp;logoColor=white"></a>
-  <a href="https://discord.com/channels/1520945955375943822"><img alt="Open Discord (existing members)" src="https://img.shields.io/badge/Discord-open%20community-5865F2?style=for-the-badge&amp;logo=discord&amp;logoColor=white"></a>
+  <a href="https://discord.com/channels/1540210584149295134"><img alt="Open Discord (existing members)" src="https://img.shields.io/badge/Discord-open%20community-5865F2?style=for-the-badge&amp;logo=discord&amp;logoColor=white"></a>
   <a href="https://github.com/koolaid-dotcom/Maytrix-Mods/actions/workflows/build.yml"><img alt="Build status" src="https://github.com/koolaid-dotcom/Maytrix-Mods/actions/workflows/build.yml/badge.svg?branch=main"></a>
   <img alt="PCVR" src="https://img.shields.io/badge/target-PCVR-8b5cf6?style=for-the-badge">
   <img alt="Local only" src="https://img.shields.io/badge/privacy-local%20only-2563eb?style=for-the-badge">
@@ -21,7 +21,7 @@
   <a href="#install-for-testing">Install</a> ·
   <a href="#categories">Features</a> ·
   <a href="#controls">Controls</a> ·
-  <a href="https://discord.com/channels/1520945955375943822"><strong>Discord</strong></a> ·
+  <a href="https://discord.com/channels/1540210584149295134"><strong>Discord</strong></a> ·
   <a href="CHANGELOG.md">Changelog</a> ·
   <a href="https://github.com/koolaid-dotcom/Maytrix-Mods/issues">Issues</a> ·
   <a href="#build">Build</a>
@@ -50,7 +50,7 @@ Maytrix contains no gameplay cheats, player targeting, anti-cheat bypasses, room
 ### Discord
 
 - Opens the existing-members Maytrix Discord page only after a deliberate two-press confirmation
-- Uses the fixed address `https://discord.com/channels/1520945955375943822`
+- Uses the fixed address `https://discord.com/channels/1540210584149295134`
 - Opens the PC's default browser; Maytrix never reads Discord login details or tokens
 - Includes an explicit GitHub button with the same confirmation behavior
 
